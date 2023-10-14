@@ -5,7 +5,14 @@ import pickle
 import re
 import os
 
-HOST = '192.168.5.73'
+
+"""
+Student:
+    Ali Alsada, 201960570
+    Hassan Alhamaqi, 201962610
+"""
+
+HOST = '192.168.0.235' #change it to the host ip address
 PORT = 5018
 HEADER = 255
 CLIENT_ID_LENGTH = 8

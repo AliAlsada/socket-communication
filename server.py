@@ -2,7 +2,14 @@ import socket
 import threading
 import pickle
 
-HOST = '192.168.5.73'
+"""
+Student:
+    Ali Alsada, 201960570
+    Hassan Alhamaqi, 201962610
+"""
+
+
+HOST = '192.168.0.235' #change it to your ip address
 PORT = 5018
 HEADER = 255
 DISCONNECT_MESSAGE = '@QUIT'
@@ -104,7 +111,7 @@ def forwardMessage(sourceId, msg):
     writtenMessage = writtenMessage[0:]
     lock.acquire()
     if(destinationId in connectedClients):
-        connectedClients[destinationId].send(f'Message from user {sourceId} : {writtenMessage}'.encode())
+        connectedClients[destinationId].send(f'Message from user-{sourceId} : {writtenMessage}'.encode())
     else:
         connectedClients[sourceId].send(f'User {destinationId} is Offline'.encode())
     lock.release()
