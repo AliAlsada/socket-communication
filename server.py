@@ -2,7 +2,7 @@ import socket
 import threading
 import pickle
 
-HOST = '192.168.0.235'
+HOST = '192.168.5.73'
 PORT = 5018
 HEADER = 255
 DISCONNECT_MESSAGE = '@QUIT'
@@ -34,7 +34,12 @@ def handleClient(conn, addr):
             1. He will send the length of the message in bytes
             2. He will send the actual message
         """
-        msg_length = conn.recv(HEADER).decode()
+        try:
+            msg_length = conn.recv(HEADER).decode()
+        except Exception as e:
+            connected = quitMessage(clientId)
+            break
+        
         if msg_length:
             msg_length = int(msg_length)
             msg = conn.recv(msg_length).decode()
@@ -86,7 +91,7 @@ def quitMessage(clientId):
 
     
 def listMessage(conn): 
-    conn.send(f'\nThe number of online clients is: {len(connectedClients)}\n'.encode())
+    conn.send(f'The number of online clients is: {len(connectedClients)}\n'.encode())
     for id in connectedClients:
         conn.send(f'----Client Id: {id}\n'.encode())
     

@@ -5,7 +5,7 @@ import pickle
 import re
 import os
 
-HOST = '192.168.0.235'
+HOST = '192.168.5.73'
 PORT = 5018
 HEADER = 255
 CLIENT_ID_LENGTH = 8
@@ -41,7 +41,7 @@ def receiveClientMsg(client):
             try:
                 msg = client.recv(1024).decode()
                 if msg:
-                    print(f'{msg}') 
+                    print(f'\n{msg}') 
                 
             except Exception as e:
                 break
@@ -116,9 +116,10 @@ def clientToClientMessage(client, command):
         destinationId = parts[0][1:-1]
         msg = " ".join(parts[1:])
         msg = msg[0:]
-
-
-        send(f'[MESSAGE] ({destinationId}) {msg}', client)
+        if (len(msg.encode())>239):
+            print(f"\nmessage is too long to be sent, remove {len(msg.encode()) - 239} character(s) and try again.")
+        else:
+            send(f'[MESSAGE] ({destinationId}) {msg}', client)
 
 
 
