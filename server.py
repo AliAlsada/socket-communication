@@ -3,9 +3,8 @@ import threading
 import pickle
 
 HOST = '192.168.5.73'
-PORT = 5013
+PORT = 5018
 HEADER = 255
-
 DISCONNECT_MESSAGE = '@QUIT'
 CHECK_ONLINE_MESSAGE = '@List'
 
@@ -24,6 +23,7 @@ def isDuplicate(conn, clientId):
     conn.send("success".encode())
     return False
 
+
 def handleClient(conn, addr):
 
     connected = True
@@ -34,19 +34,25 @@ def handleClient(conn, addr):
             1. He will send the length of the message in bytes
             2. He will send the actual message
         """
-        msg_length = conn.recv(HEADER).decode()
+        try:
+            msg_length = conn.recv(HEADER).decode()
+        except Exception as e:
+            connected = quitMessage(clientId)
+            break
+        
         if msg_length:
             msg_length = int(msg_length)
             msg = conn.recv(msg_length).decode()
 
-            print(f'{msg}')
+            if ("Connect" not in msg):
+                print(msg)
 
             if "Connect" in msg:
                 clientId = msg[8:].rstrip('\x00')
                 lock.acquire()
                 if not isDuplicate(conn, clientId):
+                    print(f'{msg}')
                     conn.send("30".encode())
-                    # connectedClients[clientId] = conn
                     connectedClients[clientId] = conn
                     #update the users about the change in the list
                     updateClientsList(clientId)
@@ -60,6 +66,7 @@ def handleClient(conn, addr):
 
             elif "Quit" == msg:
                 connected = quitMessage(clientId)
+
                 
     conn.close()
     
@@ -84,7 +91,7 @@ def quitMessage(clientId):
 
     
 def listMessage(conn): 
-    conn.send(f'\nThe number of online clients is: {len(connectedClients)}\n'.encode())
+    conn.send(f'The number of online clients is: {len(connectedClients)}\n'.encode())
     for id in connectedClients:
         conn.send(f'----Client Id: {id}\n'.encode())
     
